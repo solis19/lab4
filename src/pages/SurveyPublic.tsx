@@ -4,8 +4,6 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../hooks/useAuth';
 import {
   Survey,
-  SurveyQuestion,
-  SurveyOption,
   SurveyQuestionWithOptions,
 } from '../types/database.types';
 import { TextQuestion } from '../components/Survey/TextQuestion';

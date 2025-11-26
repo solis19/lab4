@@ -255,7 +255,7 @@ export const SurveyResults = () => {
                             labelFormatter={(label) => `${label}`}
                           />
                           <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={40}>
-                            {data.map((entry, index) => (
+                            {data.map((_entry, index) => (
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Bar>

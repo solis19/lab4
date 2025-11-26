@@ -1,5 +1,4 @@
 import { SurveyQuestion } from '../../types/database.types';
-import { Input } from '../ui/Input';
 
 interface TextQuestionProps {
   question: SurveyQuestion;

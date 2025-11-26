@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SurveyQuestion, SurveyOption, QuestionType } from '../../types/database.types';
+import { SurveyQuestion, SurveyOption } from '../../types/database.types';
 import { QuestionTypeSelector } from './QuestionTypeSelector';
 import { OptionsEditor } from './OptionsEditor';
 import { Input } from '../ui/Input';
