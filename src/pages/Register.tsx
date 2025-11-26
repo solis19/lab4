@@ -25,25 +25,31 @@ export const Register = () => {
       if (signUpError) throw signUpError;
 
       if (authData.user) {
-        // Crear perfil
+        // Crear perfil (usar upsert por si ya existe)
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
+          .upsert({
             id: authData.user.id,
             display_name: displayName || null,
-          });
+          }, { onConflict: 'id' });
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error('Error creando perfil:', profileError);
+          // No lanzar error, el trigger de BD debería haberlo creado
+        }
 
-        // Asignar rol de creator por defecto
+        // Asignar rol de creator por defecto (usar upsert)
         const { error: roleError } = await supabase
           .from('user_roles')
-          .insert({
+          .upsert({
             user_id: authData.user.id,
             role: 'creator',
-          });
+          }, { onConflict: 'user_id' });
 
-        if (roleError) throw roleError;
+        if (roleError) {
+          console.error('Error asignando rol:', roleError);
+          // No lanzar error, el trigger de BD debería haberlo creado
+        }
 
         navigate('/dashboard');
       }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Plataforma de Encuestas QR
 
 Aplicación frontend para gestión de encuestas y formularios dinámicos construida con React, TypeScript, Vite y Supabase.
@@ -140,3 +141,6 @@ Ver `Doc/ReadmeBD.txt` para más detalles sobre la estructura de la base de dato
 
 MIT
 
+=======
+# lab4
+>>>>>>> 4b2df8b928b381be2fe1e94918092ccc1c71e82e
