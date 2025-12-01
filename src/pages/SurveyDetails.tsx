@@ -185,14 +185,19 @@ export const SurveyDetails = () => {
             {survey.status === 'published' && (
               <>
                 <Button onClick={() => setShowQR(true)} className="w-full sm:w-auto text-sm">Ver Código QR</Button>
+                <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/results`)} className="w-full sm:w-auto text-sm">
+                  Ver Resultados
+                </Button>
                 <Button variant="danger" onClick={handleClose} className="w-full sm:w-auto text-sm">
                   Cerrar Encuesta
                 </Button>
               </>
             )}
-            <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/results`)} className="w-full sm:w-auto text-sm">
-              Ver Resultados
-            </Button>
+            {survey.status === 'draft' && (
+              <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/results`)} className="w-full sm:w-auto text-sm">
+                Ver Resultados
+              </Button>
+            )}
           </div>
         </div>
 

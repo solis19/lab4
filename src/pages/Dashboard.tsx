@@ -245,7 +245,7 @@ export const Dashboard = () => {
       <div className="mt-6 sm:mt-8">
         <div className="bg-white shadow rounded-lg p-4 sm:p-6">
           <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
-            Evolución de Respuestas (Últimos 7 días)
+            Actividad de Respuestas (Últimos 7 días)
           </h2>
           <div className="h-64 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
