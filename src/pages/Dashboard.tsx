@@ -15,6 +15,9 @@ export const Dashboard = () => {
     totalSurveys: 0,
     totalResponses: 0,
     activeSurveys: 0,
+    draftSurveys: 0,
+    closedSurveys: 0,
+    averageResponses: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -28,13 +31,26 @@ export const Dashboard = () => {
     if (!user) return;
 
     try {
-      // Obtener encuestas del usuario (limitadas a 10)
+      // Obtener encuestas del usuario
       const allSurveys = await surveyService.getUserSurveys(user.id);
       setSurveys(allSurveys.slice(0, 10));
 
-      // Obtener estadísticas
+      // Obtener estadísticas básicas
       const statsData = await surveyService.getUserSurveyStats(user.id);
-      setStats(statsData);
+      
+      // Calcular estadísticas adicionales
+      const draftCount = allSurveys.filter(s => s.status === 'draft').length;
+      const closedCount = allSurveys.filter(s => s.status === 'closed').length;
+      const avgResponses = statsData.totalSurveys > 0 
+        ? Math.round(statsData.totalResponses / statsData.totalSurveys) 
+        : 0;
+
+      setStats({
+        ...statsData,
+        draftSurveys: draftCount,
+        closedSurveys: closedCount,
+        averageResponses: avgResponses,
+      });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -51,15 +67,17 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-0 relative">
-      {/* Blob shapes decorativos de fondo */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute top-1/3 -left-32 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute bottom-20 right-1/4 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+    <div className="relative min-h-screen">
+      {/* Blob shapes decorativos de fondo expandido a toda la pantalla */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30 z-0">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-1/3 -left-48 w-[550px] h-[550px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute -bottom-32 right-1/4 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-2/3 right-1/3 w-[450px] h-[450px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
       
-      <div className="sm:flex sm:items-center relative z-10">
+      <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-0 relative z-10">
+        <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Dashboard</h1>
           <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-700">
@@ -73,54 +91,144 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-3">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+      {/* KPIs Mejorados */}
+      <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Total de Formularios */}
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-lg rounded-xl">
           <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.totalSurveys}</div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-blue-100 uppercase tracking-wide">
+                  Total Formularios
+                </p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold text-white">
+                  {stats.totalSurveys}
+                </p>
               </div>
-              <div className="ml-4 sm:ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                    Total de Formularios
-                  </dt>
-                </dl>
+              <div className="bg-blue-400 bg-opacity-30 rounded-full p-3">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        {/* Total de Respuestas */}
+        <div className="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg rounded-xl">
           <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.totalResponses}</div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-green-100 uppercase tracking-wide">
+                  Total Respuestas
+                </p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold text-white">
+                  {stats.totalResponses}
+                </p>
               </div>
-              <div className="ml-4 sm:ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                    Total de Respuestas
-                  </dt>
-                </dl>
+              <div className="bg-green-400 bg-opacity-30 rounded-full p-3">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        {/* Formularios Activos */}
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-lg rounded-xl">
           <div className="p-4 sm:p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.activeSurveys}</div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-purple-100 uppercase tracking-wide">
+                  Activos
+                </p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold text-white">
+                  {stats.activeSurveys}
+                </p>
               </div>
-              <div className="ml-4 sm:ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">
-                    Formularios Activos
-                  </dt>
-                </dl>
+              <div className="bg-purple-400 bg-opacity-30 rounded-full p-3">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Promedio de Respuestas */}
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 overflow-hidden shadow-lg rounded-xl">
+          <div className="p-4 sm:p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-orange-100 uppercase tracking-wide">
+                  Promedio
+                </p>
+                <p className="mt-2 text-2xl sm:text-3xl font-bold text-white">
+                  {stats.averageResponses}
+                </p>
+                <p className="text-xs text-orange-100 mt-1">respuestas/formulario</p>
+              </div>
+              <div className="bg-orange-400 bg-opacity-30 rounded-full p-3">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Estadísticas Secundarias */}
+      <div className="mt-4 sm:mt-6 grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Borradores */}
+        <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-yellow-400">
+          <div className="p-3 sm:p-4">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-yellow-100 rounded-md p-2">
+                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Borradores</p>
+                <p className="text-lg sm:text-xl font-semibold text-gray-900">{stats.draftSurveys}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cerrados */}
+        <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-gray-400">
+          <div className="p-3 sm:p-4">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-gray-100 rounded-md p-2">
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Cerrados</p>
+                <p className="text-lg sm:text-xl font-semibold text-gray-900">{stats.closedSurveys}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tasa de Actividad */}
+        <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-indigo-400 col-span-2 lg:col-span-1">
+          <div className="p-3 sm:p-4">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-indigo-100 rounded-md p-2">
+                <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Tasa Activos</p>
+                <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                  {stats.totalSurveys > 0 ? Math.round((stats.activeSurveys / stats.totalSurveys) * 100) : 0}%
+                </p>
               </div>
             </div>
           </div>
@@ -237,6 +345,7 @@ export const Dashboard = () => {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );

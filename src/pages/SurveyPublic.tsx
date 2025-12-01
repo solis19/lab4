@@ -198,11 +198,11 @@ export const SurveyPublic = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Blob shapes decorativos */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute top-1/4 right-0 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+      {/* Blob shapes decorativos más grandes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-1/4 -right-32 w-[550px] h-[550px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute -bottom-32 left-1/3 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
       
       <div className="max-w-3xl mx-auto relative z-10">

@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 export const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
   const [genero, setGenero] = useState('');
@@ -79,12 +80,12 @@ export const Register = () => {
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Azul con información */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#1d4ed8] relative overflow-hidden">
-        {/* Blob shapes decorativos */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl"></div>
-          <div className="absolute top-40 right-20 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"></div>
-          <div className="absolute bottom-20 left-32 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl"></div>
-          <div className="absolute top-1/2 left-1/4 w-56 h-56 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        {/* Blob shapes decorativos más grandes */}
+        <div className="absolute inset-0 opacity-25">
+          <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl"></div>
+          <div className="absolute top-1/3 -right-32 w-[500px] h-[500px] bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl"></div>
+          <div className="absolute -bottom-32 left-1/4 w-[450px] h-[450px] bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-2xl animate-pulse"></div>
         </div>
         
         <div className="relative z-10 flex flex-col justify-center items-start p-12 text-white w-full min-h-screen">
@@ -110,18 +111,18 @@ export const Register = () => {
           </div>
           
           <div className="text-sm text-blue-200 mt-auto pb-8">
-            © 2024 EncuestasQR. Todos los derechos reservados.
+            © 2025 EncuestasQR. Todos los derechos reservados.
           </div>
         </div>
       </div>
 
       {/* Panel derecho - Formulario */}
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-purple-50 px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
-        {/* Blob shapes decorativos en el fondo */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        {/* Blob shapes decorativos más grandes en el fondo */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-[550px] h-[550px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
         </div>
         <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-10">
@@ -229,17 +230,34 @@ export const Register = () => {
                 />
               </div>
 
-              <div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
-                  placeholder="Contraseña (mínimo 6 caracteres) *"
-                />
-              </div>
+               <div className="relative">
+                 <input
+                   type={showPassword ? "text" : "password"}
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+                   required
+                   minLength={6}
+                   className="appearance-none relative block w-full px-4 py-3 pr-12 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
+                   placeholder="Contraseña (mínimo 6 caracteres) *"
+                 />
+                 <button
+                   type="button"
+                   onClick={() => setShowPassword(!showPassword)}
+                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                 >
+                   {showPassword ? (
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                     </svg>
+                   ) : (
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                     </svg>
+                   )}
+                 </button>
+               </div>
             </div>
 
             <div className="pt-2">

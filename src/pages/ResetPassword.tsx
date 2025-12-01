@@ -91,7 +91,7 @@ export const ResetPassword = () => {
           </div>
           
           <div className="text-sm text-blue-200 mt-auto pb-8">
-            © 2024 EncuestasQR. Todos los derechos reservados.
+            © 2025 EncuestasQR. Todos los derechos reservados.
           </div>
         </div>
       </div>

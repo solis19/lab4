@@ -18,11 +18,11 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
-      {/* Blob shapes decorativos globales */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-10 z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-[350px] h-[350px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+      {/* Blob shapes decorativos globales más grandes */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-15 z-0">
+        <div className="absolute -top-32 -right-32 w-[700px] h-[700px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute -bottom-32 -left-32 w-[650px] h-[650px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-[600px] h-[600px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
       
       <nav className="bg-[#1d4ed8] shadow-lg relative overflow-hidden z-10">
@@ -60,9 +60,17 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-xs sm:text-sm text-white truncate max-w-[80px] sm:max-w-none">
-                {profile?.display_name || (user?.email ? user.email.split('@')[0] : '')}
-              </span>
+              <Link
+                to="/profile"
+                className="text-xs sm:text-sm text-white hover:text-blue-100 transition-colors truncate max-w-[80px] sm:max-w-none flex items-center gap-1 group"
+              >
+                <svg className="w-4 h-4 opacity-80 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="underline decoration-transparent group-hover:decoration-white transition-all">
+                  {profile?.display_name || (user?.email ? user.email.split('@')[0] : '')}
+                </span>
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="bg-white text-[#1d4ed8] px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-50 transition-colors whitespace-nowrap"

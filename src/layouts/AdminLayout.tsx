@@ -23,11 +23,12 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
-      {/* Blob shapes decorativos globales */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-10 z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute top-1/2 right-1/4 w-[350px] h-[350px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+      {/* Blob shapes decorativos de fondo expandido a toda la pantalla */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30 z-0">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-1/3 -left-48 w-[550px] h-[550px] bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute -bottom-32 right-1/4 w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-2/3 right-1/3 w-[450px] h-[450px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
       
       {/* Header simplificado */}
@@ -40,9 +41,17 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
               </Link>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-xs sm:text-sm text-white truncate max-w-[80px] sm:max-w-none">
-                {profile?.display_name || (user?.email ? user.email.split('@')[0] : '')}
-              </span>
+              <Link
+                to="/profile"
+                className="text-xs sm:text-sm text-white hover:text-blue-100 transition-colors truncate max-w-[80px] sm:max-w-none flex items-center gap-1 group"
+              >
+                <svg className="w-4 h-4 opacity-80 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="underline decoration-transparent group-hover:decoration-white transition-all">
+                  {profile?.display_name || (user?.email ? user.email.split('@')[0] : '')}
+                </span>
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="bg-white text-[#1d4ed8] px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-50 transition-colors whitespace-nowrap"

@@ -18,6 +18,7 @@ import { Dashboard } from './pages/Dashboard';
 import { SurveyBuilder } from './pages/SurveyBuilder';
 import { SurveyDetails } from './pages/SurveyDetails';
 import { SurveyResults } from './pages/SurveyResults';
+import { Profile } from './pages/Profile';
 
 // Páginas de administración
 import { Users } from './pages/admin/Users';
@@ -84,6 +85,16 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <SurveyResults />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Profile />
                   </MainLayout>
                 </ProtectedRoute>
               }

@@ -75,12 +75,12 @@ export interface ResponseItem {
 
 export interface AuditLog {
   id: string;
-  user_id: string | null;
-  action: 'create' | 'publish' | 'update' | 'archive' | string;
-  table_name: string;
-  record_id: string | null;
-  details: Record<string, any> | null;
-  created_at?: string;
+  actor_id: string | null;  // Usuario que realiza la acción
+  action: string;            // Tipo de acción (create, update, delete, login, etc.)
+  target_id: string | null;  // ID del registro afectado
+  table_name?: string | null; // Tabla donde ocurrió la acción
+  origin?: string | null;     // Pantalla / módulo de origen (opcional)
+  at?: string;               // Timestamp de la acción
 }
 
 // Tipos para formularios y respuestas

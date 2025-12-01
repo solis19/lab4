@@ -9,7 +9,7 @@ export const auditService = {
     const { data, error } = await supabase
       .from('audit_log')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('at', { ascending: false })
       .limit(100);
 
     if (error) throw error;
@@ -17,14 +17,12 @@ export const auditService = {
   },
 
   /**
-   * Crear un log de auditoría
+   * Crear un log de auditoría manualmente (opcional, los triggers lo hacen automáticamente)
    */
   async createAuditLog(logData: {
-    user_id: string | null;
+    actor_id: string | null;
     action: string;
-    table_name: string;
-    record_id?: string | null;
-    details?: Record<string, any> | null;
+    target_id?: string | null;
   }): Promise<void> {
     const { error } = await supabase.from('audit_log').insert(logData);
 
@@ -38,8 +36,8 @@ export const auditService = {
     const { data, error } = await supabase
       .from('audit_log')
       .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+      .eq('actor_id', userId)
+      .order('at', { ascending: false })
       .limit(50);
 
     if (error) throw error;
@@ -47,14 +45,14 @@ export const auditService = {
   },
 
   /**
-   * Obtener logs de una tabla específica
+   * Obtener logs de una tabla específica (filtrando por action que contenga el nombre de la tabla)
    */
   async getTableAuditLogs(tableName: string): Promise<AuditLog[]> {
     const { data, error } = await supabase
       .from('audit_log')
       .select('*')
-      .eq('table_name', tableName)
-      .order('created_at', { ascending: false })
+      .like('action', `${tableName}_%`)
+      .order('at', { ascending: false })
       .limit(50);
 
     if (error) throw error;
