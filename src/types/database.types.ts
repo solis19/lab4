@@ -79,7 +79,6 @@ export interface AuditLog {
   action: string;            // Tipo de acción (create, update, delete, login, etc.)
   target_id: string | null;  // ID del registro afectado
   table_name?: string | null; // Tabla donde ocurrió la acción
-  origin?: string | null;     // Pantalla / módulo de origen (opcional)
   at?: string;               // Timestamp de la acción
 }
 

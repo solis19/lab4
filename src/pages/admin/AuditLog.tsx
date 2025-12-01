@@ -70,7 +70,6 @@ export const AuditLogPage = () => {
     return (
       log.action.toLowerCase().includes(term) ||
       (log.table_name || '').toLowerCase().includes(term) ||
-      (log.origin || '').toLowerCase().includes(term) ||
       (userNames[log.actor_id || ''] || '').toLowerCase().includes(term)
     );
   });
@@ -112,13 +111,12 @@ export const AuditLogPage = () => {
               <TableHeaderCell>Tabla</TableHeaderCell>
               <TableHeaderCell>ID Afectado</TableHeaderCell>
               <TableHeaderCell>Usuario</TableHeaderCell>
-              <TableHeaderCell>Origen</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredLogs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                   No hay registros de auditoría
                 </TableCell>
               </TableRow>
@@ -156,9 +154,6 @@ export const AuditLogPage = () => {
                       ? userNames[log.actor_id] ||
                         `${log.actor_id.substring(0, 8)}...`
                       : 'Sistema'}
-                  </TableCell>
-                  <TableCell className="text-xs text-gray-500">
-                    {log.origin || 'Desconocido'}
                   </TableCell>
                 </TableRow>
               ))
