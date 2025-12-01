@@ -58,6 +58,17 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                   </Link>
                 )}
               </div>
+              {/* Menú móvil - Solo Admin */}
+              {role === 'admin' && (
+                <div className="flex md:hidden ml-2">
+                  <Link
+                    to="/admin"
+                    className="bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-white/30 transition-colors"
+                  >
+                    Admin
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <Link
