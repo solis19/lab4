@@ -126,24 +126,24 @@ export const SurveyDetails = () => {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8">
+    <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+        <div className="mb-4 sm:mb-6">
+          <Button variant="outline" onClick={() => navigate('/dashboard')} className="text-sm">
             ← Volver
           </Button>
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">{survey.title}</h1>
+        <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 break-words">{survey.title}</h1>
               {survey.description && (
-                <p className="mt-2 text-gray-600">{survey.description}</p>
+                <p className="mt-2 text-sm sm:text-base text-gray-600 break-words">{survey.description}</p>
               )}
             </div>
             <span
-              className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+              className={`inline-flex px-3 py-1 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap self-start ${
                 survey.status === 'published'
                   ? 'bg-green-100 text-green-800'
                   : survey.status === 'draft'
@@ -159,32 +159,32 @@ export const SurveyDetails = () => {
             </span>
           </div>
 
-          <div className="flex gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6">
             {survey.status === 'draft' && (
               <>
-                <Button onClick={handlePublish}>Publicar Encuesta</Button>
-                <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/edit`)}>
+                <Button onClick={handlePublish} className="w-full sm:w-auto text-sm">Publicar Encuesta</Button>
+                <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/edit`)} className="w-full sm:w-auto text-sm">
                   Editar Encuesta
                 </Button>
               </>
             )}
             {survey.status === 'published' && (
               <>
-                <Button onClick={() => setShowQR(true)}>Ver Código QR</Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button onClick={() => setShowQR(true)} className="w-full sm:w-auto text-sm">Ver Código QR</Button>
+                <Button variant="danger" onClick={handleClose} className="w-full sm:w-auto text-sm">
                   Cerrar Encuesta
                 </Button>
               </>
             )}
-            <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/results`)}>
+            <Button variant="outline" onClick={() => navigate(`/surveys/${survey.id}/results`)} className="w-full sm:w-auto text-sm">
               Ver Resultados
             </Button>
           </div>
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Preguntas</h2>
-          <div className="space-y-4">
+        <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Preguntas</h2>
+          <div className="space-y-3 sm:space-y-4">
             {questions.map((question, index) => {
               // Determinar el color y texto del chip según el tipo
               const getTypeChip = (type: string) => {
@@ -205,19 +205,19 @@ export const SurveyDetails = () => {
               const typeChip = getTypeChip(question.type);
 
               return (
-                <div key={question.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={question.id} className="border border-gray-200 rounded-lg p-3 sm:p-4">
                   <div className="flex items-start">
-                    <span className="font-medium text-gray-900 mr-2">{index + 1}.</span>
-                    <div className="flex-1">
-                      <p className="text-gray-900 mb-2">{question.question_text}</p>
+                    <span className="font-medium text-gray-900 mr-2 text-sm sm:text-base">{index + 1}.</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm sm:text-base text-gray-900 mb-2 break-words">{question.question_text}</p>
                       <div className="flex gap-2 flex-wrap">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeChip.color}`}
+                          className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${typeChip.color}`}
                         >
                           {typeChip.label}
                         </span>
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             question.required
                               ? 'bg-red-100 text-red-800'
                               : 'bg-gray-100 text-gray-600'
@@ -227,9 +227,9 @@ export const SurveyDetails = () => {
                         </span>
                       </div>
                       {question.options_list && question.options_list.length > 0 && (
-                        <ul className="mt-3 list-disc list-inside text-sm text-gray-600">
+                        <ul className="mt-2 sm:mt-3 list-disc list-inside text-xs sm:text-sm text-gray-600 space-y-1">
                           {question.options_list.map((opt) => (
-                            <li key={opt.id}>{opt.label}</li>
+                            <li key={opt.id} className="break-words">{opt.label}</li>
                           ))}
                         </ul>
                       )}
@@ -243,10 +243,10 @@ export const SurveyDetails = () => {
       </div>
 
       <Modal isOpen={showQR} onClose={() => setShowQR(false)} title="Código QR de la Encuesta">
-        <div className="flex flex-col items-center space-y-4">
-          <QRCodeSVG value={publicUrl} size={256} />
-          <p className="text-sm text-gray-600 text-center break-all">{publicUrl}</p>
-          <Button onClick={() => navigator.clipboard.writeText(publicUrl)}>
+        <div className="flex flex-col items-center space-y-4 p-2">
+          <QRCodeSVG value={publicUrl} size={Math.min(256, window.innerWidth - 100)} />
+          <p className="text-xs sm:text-sm text-gray-600 text-center break-all px-2">{publicUrl}</p>
+          <Button onClick={() => navigator.clipboard.writeText(publicUrl)} className="w-full sm:w-auto text-sm">
             Copiar URL
           </Button>
         </div>

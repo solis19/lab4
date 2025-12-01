@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../hooks/useAuth';
 import { Survey, SurveyQuestion, SurveyOption, ResponseItem } from '../types/database.types';
@@ -217,51 +217,93 @@ export const SurveyResults = () => {
           </Button>
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+        <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-6">
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 break-words">
             Resultados: {survey?.title}
           </h1>
-          <p className="text-gray-600">Total de respuestas: {totalResponses}</p>
+          <p className="text-sm sm:text-base text-gray-600">Total de respuestas: {totalResponses}</p>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {questions.map((question) => {
             const data = getQuestionData(question);
 
             return (
-              <div key={question.id} className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
+              <div key={question.id} className="bg-white shadow rounded-lg p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-4 break-words">
                   {question.question_text}
                 </h2>
 
                 {question.type !== 'text' ? (
                   data.length > 0 ? (
-                    <div style={{ height: Math.max(300, data.length * 80) }}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} layout="vertical" margin={{ left: 20, right: 30, top: 20, bottom: 20 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            type="number" 
-                            label={{ value: 'Número de respuestas', position: 'insideBottom', offset: -10 }}
-                          />
-                          <YAxis 
-                            dataKey="name" 
-                            type="category" 
-                            width={200}
-                            tick={{ fontSize: 13 }}
-                          />
-                          <Tooltip 
-                            formatter={(value: any) => [`${value} respuesta(s)`, '']}
-                            labelFormatter={(label) => `${label}`}
-                          />
-                          <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={40}>
-                            {data.map((_entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+                    question.type === 'single' ? (
+                      // Gráfica de pastel para opción única
+                      <div className="w-full" style={{ height: 350 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={data}
+                              cx="50%"
+                              cy="45%"
+                              labelLine={false}
+                              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                              outerRadius="60%"
+                              fill="#8884d8"
+                              dataKey="value"
+                            >
+                              {data.map((_entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              formatter={(value: any) => [`${value} respuesta(s)`, 'Total']}
+                              contentStyle={{ fontSize: '12px' }}
+                            />
+                            <Legend 
+                              verticalAlign="bottom" 
+                              height={36}
+                              formatter={(value, entry: any) => `${value} (${entry.payload.value})`}
+                              wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      // Gráfica de barras para opción múltiple y likert
+                      <div className="w-full overflow-x-auto">
+                        <div style={{ minWidth: '300px', height: Math.max(250, data.length * 60) }}>
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart 
+                              data={data} 
+                              layout="vertical" 
+                              margin={{ left: 10, right: 10, top: 10, bottom: 10 }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis 
+                                type="number" 
+                                tick={{ fontSize: 11 }}
+                              />
+                              <YAxis 
+                                dataKey="name" 
+                                type="category" 
+                                width={120}
+                                tick={{ fontSize: 11 }}
+                              />
+                              <Tooltip 
+                                formatter={(value: any) => [`${value} respuesta(s)`, '']}
+                                labelFormatter={(label) => `${label}`}
+                                contentStyle={{ fontSize: '12px' }}
+                              />
+                              <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={30}>
+                                {data.map((_entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                    )
                   ) : (
                     <p className="text-gray-500 text-center py-8">
                       No hay respuestas para esta pregunta aún
@@ -277,17 +319,17 @@ export const SurveyResults = () => {
                         textResponses[question.id].map((response, index) => (
                           <div
                             key={index}
-                            className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                            className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200"
                           >
-                            <div className="flex justify-between items-start mb-2">
-                              <span className="text-xs font-medium text-gray-500">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-2 mb-2">
+                              <span className="text-xs font-medium text-gray-500 break-all">
                                 {response.user_email ? (
                                   <>Usuario: {response.user_email}</>
                                 ) : (
                                   'Anónimo'
                                 )}
                               </span>
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-gray-400 whitespace-nowrap">
                                 {new Date(response.submitted_at).toLocaleString('es-ES', {
                                   day: '2-digit',
                                   month: '2-digit',
@@ -297,11 +339,11 @@ export const SurveyResults = () => {
                                 })}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-900">{response.value_text}</p>
+                            <p className="text-sm text-gray-900 break-words">{response.value_text}</p>
                           </div>
                         ))
                       ) : (
-                        <p className="text-gray-500 text-center py-8">
+                        <p className="text-gray-500 text-center py-8 text-sm">
                           No hay respuestas para esta pregunta aún
                         </p>
                       )}

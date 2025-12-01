@@ -136,6 +136,39 @@ Ver `Doc/ReadmeBD.txt` para más detalles sobre la estructura de la base de dato
 2. Configurar las variables de entorno
 3. Desplegar automáticamente
 
+## Integración Continua (CI/CD)
+
+Este proyecto utiliza **GitHub Actions** y **SonarCloud** para análisis de calidad de código.
+
+### Configuración de SonarCloud
+
+1. Crear cuenta en [SonarCloud](https://sonarcloud.io/)
+2. Importar tu repositorio de GitHub
+3. Obtener tu `Organization Key` y `Project Key`
+4. Actualizar el archivo `sonar-project.properties`:
+   ```properties
+   sonar.projectKey=tu-usuario_encuestas-qr
+   sonar.organization=tu-organizacion
+   ```
+5. Agregar el token de SonarCloud a los secrets de GitHub:
+   - Ve a tu repositorio → Settings → Secrets and variables → Actions
+   - Crea un nuevo secret llamado `SONAR_TOKEN`
+   - Pega el token generado en SonarCloud
+
+### GitHub Actions
+
+El workflow de CI se ejecuta automáticamente en:
+- Push a las ramas `main` y `develop`
+- Pull requests hacia `main` y `develop`
+
+El workflow realiza:
+- ✅ Instalación de dependencias
+- ✅ Ejecución del linter (ESLint)
+- ✅ Build del proyecto
+- ✅ Análisis de calidad con SonarCloud
+
+Ver el archivo `.github/workflows/ci.yml` para más detalles.
+
 ## Licencia
 
 MIT

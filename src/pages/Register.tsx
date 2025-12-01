@@ -1,14 +1,27 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 export const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [genero, setGenero] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+
+  // Formatear número de teléfono con guion (9999-9999)
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Solo dígitos
+    if (value.length > 8) value = value.slice(0, 8);
+    if (value.length > 4) {
+      value = value.slice(0, 4) + '-' + value.slice(4);
+    }
+    setPhone(value);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,37 +29,45 @@ export const Register = () => {
     setIsLoading(true);
 
     try {
-      // Registrar usuario
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      // Validar número de teléfono (formato 9999-9999)
+      if (!/^\d{4}-\d{4}$/.test(phone)) {
+        setError('El número de teléfono debe tener el formato 9999-9999.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Registrar usuario (guardar teléfono sin guion)
+      const phoneClean = phone.replace('-', '');
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            display_name: displayName,
+            phone: phoneClean,
+            genero: genero,
+            fecha_nacimiento: fechaNacimiento,
+          },
+        },
       });
 
-      if (signUpError) throw signUpError;
-
-      if (authData.user) {
-        // Crear perfil
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            display_name: displayName || null,
-          });
-
-        if (profileError) throw profileError;
-
-        // Asignar rol de creator por defecto
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: authData.user.id,
-            role: 'creator',
-          });
-
-        if (roleError) throw roleError;
-
-        navigate('/dashboard');
+      if (signUpError) {
+        // Verificar si el error es por usuario existente
+        if (signUpError.message.includes('already registered') || 
+            signUpError.message.includes('User already registered') ||
+            signUpError.status === 422) {
+          throw new Error('Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.');
+        }
+        throw signUpError;
       }
+
+      // Verificar si el usuario ya existe (Supabase puede devolver success pero con user null)
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        throw new Error('Este correo electrónico ya está registrado. Por favor, inicia sesión o usa otro correo.');
+      }
+
+      // Mostrar mensaje de éxito
+      setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Error al registrar usuario');
     } finally {
@@ -58,10 +79,12 @@ export const Register = () => {
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Azul con información */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#1d4ed8] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
-          <div className="absolute top-40 left-40 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
-          <div className="absolute top-60 left-60 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
+        {/* Blob shapes decorativos */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute top-40 right-20 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute bottom-20 left-32 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute top-1/2 left-1/4 w-56 h-56 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
         </div>
         
         <div className="relative z-10 flex flex-col justify-center items-start p-12 text-white w-full min-h-screen">
@@ -93,20 +116,56 @@ export const Register = () => {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="flex-1 flex items-center justify-center bg-white px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-md w-full">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-purple-50 px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
+        {/* Blob shapes decorativos en el fondo */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+        <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold text-gray-900 mb-2">
               Crea tu cuenta
             </h2>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
+          {success ? (
+            <div className="space-y-6">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+                <div className="flex justify-center mb-4">
+                  <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-green-900 mb-2">
+                  ¡Cuenta creada exitosamente!
+                </h3>
+                <p className="text-green-700 mb-4">
+                  Se te ha enviado a tu correo el enlace de confirmación de cuenta.
+                </p>
+                <p className="text-sm text-green-600">
+                  Por favor, revisa tu bandeja de entrada (y spam) y haz clic en el enlace para activar tu cuenta.
+                </p>
               </div>
-            )}
+              
+              <div className="text-center">
+                <Link
+                  to="/login"
+                  className="text-[#1d4ed8] hover:text-[#1e40af] font-semibold underline"
+                >
+                  Volver al inicio de sesión
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {error}
+                  </div>
+                )}
 
             <div className="space-y-5">
               <div>
@@ -114,8 +173,9 @@ export const Register = () => {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
+                  required
                   className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
-                  placeholder="Nombre completo"
+                  placeholder="Nombre completo *"
                 />
               </div>
 
@@ -126,7 +186,46 @@ export const Register = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
-                  placeholder="correo@ejemplo.com"
+                  placeholder="Correo electrónico *"
+                />
+              </div>
+
+              <div>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  required
+                  minLength={9}
+                  maxLength={9}
+                  pattern="\d{4}-\d{4}"
+                  className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
+                  placeholder="Teléfono (9999-9999) *"
+                />
+              </div>
+
+              <div>
+                <select
+                  value={genero}
+                  onChange={(e) => setGenero(e.target.value)}
+                  required
+                  className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors bg-transparent"
+                >
+                  <option value="" disabled>Género *</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="femenino">Femenino</option>
+                </select>
+              </div>
+
+              <div>
+                <input
+                  type="date"
+                  value={fechaNacimiento}
+                  onChange={(e) => setFechaNacimiento(e.target.value)}
+                  required
+                  max={new Date().toISOString().split('T')[0]}
+                  className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
+                  placeholder="Fecha de nacimiento *"
                 />
               </div>
 
@@ -138,7 +237,7 @@ export const Register = () => {
                   required
                   minLength={6}
                   className="appearance-none relative block w-full px-4 py-3 border-b-2 border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-[#1d4ed8] focus:z-10 transition-colors"
-                  placeholder="Contraseña (mínimo 6 caracteres)"
+                  placeholder="Contraseña (mínimo 6 caracteres) *"
                 />
               </div>
             </div>
@@ -176,6 +275,8 @@ export const Register = () => {
               </Link>
             </p>
           </div>
+            </>
+          )}
         </div>
       </div>
     </div>

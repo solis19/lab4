@@ -197,21 +197,28 @@ export const SurveyPublic = () => {
   if (!survey) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{survey.title}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Blob shapes decorativos */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-1/4 right-0 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+      </div>
+      
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="bg-white shadow rounded-lg p-4 sm:p-8">
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">{survey.title}</h1>
           {survey.description && (
-            <p className="text-gray-600 mb-8">{survey.description}</p>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 break-words">{survey.description}</p>
           )}
 
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {questions.map((question) => {
               const responseValue = responses[question.id];
 
@@ -273,7 +280,7 @@ export const SurveyPublic = () => {
             })}
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" isLoading={submitting}>
+              <Button type="submit" isLoading={submitting} className="w-full sm:w-auto text-sm sm:text-base">
                 Enviar Respuesta
               </Button>
             </div>

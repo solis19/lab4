@@ -6,12 +6,14 @@ export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setWarning('');
     setIsLoading(true);
 
     try {
@@ -20,7 +22,15 @@ export const Login = () => {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        // Si el error es por email no confirmado, mostrar advertencia
+        if (signInError.message.includes('Email not confirmed') || 
+            signInError.message.includes('email not confirmed')) {
+          setWarning('Correo no verificado, favor revisa tu buzón y accede al enlace de verificación');
+          return;
+        }
+        throw signInError;
+      }
 
       if (data.user) {
         // Obtener el rol del usuario
@@ -48,10 +58,12 @@ export const Login = () => {
     <div className="min-h-screen flex">
       {/* Panel izquierdo - Azul con información */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#1d4ed8] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
-          <div className="absolute top-40 left-40 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
-          <div className="absolute top-60 left-60 w-96 h-96 border-2 border-white rounded-lg transform -rotate-12"></div>
+        {/* Blob shapes decorativos */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute top-40 right-20 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute bottom-20 left-32 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl"></div>
+          <div className="absolute top-1/2 left-1/4 w-56 h-56 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
         </div>
         
         <div className="relative z-10 flex flex-col justify-center items-start p-12 text-white w-full min-h-screen">
@@ -83,8 +95,14 @@ export const Login = () => {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="flex-1 flex items-center justify-center bg-white px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-md w-full">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
+        {/* Blob shapes decorativos en el fondo */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+        <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold text-gray-900 mb-2">
               ¡Bienvenido!
@@ -95,6 +113,12 @@ export const Login = () => {
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
+              </div>
+            )}
+
+            {warning && (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
+                {warning}
               </div>
             )}
 
