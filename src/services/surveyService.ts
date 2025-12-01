@@ -140,5 +140,56 @@ export const surveyService = {
       totalResponses,
     };
   },
+
+  /**
+   * Obtener evolución de respuestas en los últimos 7 días
+   */
+  async getResponsesTimeline(userId: string) {
+    // Obtener IDs de encuestas del usuario
+    const { data: surveys } = await supabase
+      .from('surveys')
+      .select('id')
+      .eq('owner_id', userId);
+
+    if (!surveys || surveys.length === 0) {
+      return [];
+    }
+
+    // Obtener respuestas de los últimos 7 días
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const { data: responses } = await supabase
+      .from('responses')
+      .select('submitted_at')
+      .in('survey_id', surveys.map(s => s.id))
+      .gte('submitted_at', sevenDaysAgo.toISOString())
+      .order('submitted_at', { ascending: true });
+
+    // Agrupar por día
+    const timeline: { [key: string]: number } = {};
+    
+    // Inicializar los últimos 7 días con 0
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      timeline[dateStr] = 0;
+    }
+
+    // Contar respuestas por día
+    responses?.forEach(response => {
+      const dateStr = response.submitted_at.split('T')[0];
+      if (timeline[dateStr] !== undefined) {
+        timeline[dateStr]++;
+      }
+    });
+
+    // Convertir a array para el gráfico
+    return Object.entries(timeline).map(([date, count]) => ({
+      date: new Date(date).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }),
+      respuestas: count
+    }));
+  },
 };
 

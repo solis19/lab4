@@ -49,8 +49,11 @@ export const authService = {
    * Cerrar sesión
    */
   async signOut(): Promise<void> {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    // No lanzar error - forzar cierre de sesión local aunque falle en el servidor
+    if (error) {
+      console.warn('Error al cerrar sesión en servidor, cerrando localmente:', error);
+    }
   },
 };
 

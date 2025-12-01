@@ -6,11 +6,13 @@ import { Button } from '../components/ui/Button';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '../components/ui/Table';
 import { surveyService } from '../services';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [timelineData, setTimelineData] = useState<Array<{ date: string; respuestas: number }>>([]);
   const [stats, setStats] = useState({
     totalSurveys: 0,
     totalResponses: 0,
@@ -37,6 +39,10 @@ export const Dashboard = () => {
 
       // Obtener estadísticas básicas
       const statsData = await surveyService.getUserSurveyStats(user.id);
+      
+      // Obtener datos de timeline
+      const timeline = await surveyService.getResponsesTimeline(user.id);
+      setTimelineData(timeline);
       
       // Calcular estadísticas adicionales
       const draftCount = allSurveys.filter(s => s.status === 'draft').length;
@@ -231,6 +237,49 @@ export const Dashboard = () => {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gráfico de Evolución de Respuestas */}
+      <div className="mt-6 sm:mt-8">
+        <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
+            Evolución de Respuestas (Últimos 7 días)
+          </h2>
+          <div className="h-64 sm:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={timelineData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#6b7280" 
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis 
+                  stroke="#6b7280" 
+                  style={{ fontSize: '12px' }}
+                  allowDecimals={false}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#ffffff', 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                  labelStyle={{ color: '#374151', fontWeight: 600 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="respuestas" 
+                  stroke="#667eea" 
+                  strokeWidth={3}
+                  dot={{ fill: '#667eea', r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
