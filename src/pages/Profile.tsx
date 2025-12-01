@@ -40,9 +40,9 @@ export const Profile = () => {
 
       // Actualizar nombre de usuario
       const { error: profileError } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .update({ display_name: formData.display_name })
-        .eq('user_id', user.id);
+        .eq('id', user.id);
 
       if (profileError) throw profileError;
 
