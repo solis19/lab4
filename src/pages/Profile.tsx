@@ -74,12 +74,26 @@ export const Profile = () => {
         throw new Error('La nueva contraseña debe tener al menos 6 caracteres');
       }
 
+      if (!user?.email) {
+        throw new Error('No se pudo obtener el email del usuario');
+      }
+
+      // Re-autenticar con la contraseña actual
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: formData.currentPassword,
+      });
+
+      if (signInError) {
+        throw new Error('La contraseña actual es incorrecta');
+      }
+
       // Actualizar contraseña
-      const { error } = await supabase.auth.updateUser({
+      const { error: updateError } = await supabase.auth.updateUser({
         password: formData.newPassword,
       });
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       setMessage({ type: 'success', text: 'Contraseña actualizada correctamente' });
       setFormData(prev => ({
