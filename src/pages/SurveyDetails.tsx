@@ -17,12 +17,26 @@ export const SurveyDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showQR, setShowQR] = useState(false);
   const [publicUrl, setPublicUrl] = useState('');
+  const [qrSize, setQrSize] = useState(256);
 
   useEffect(() => {
     if (id && user) {
       fetchSurvey();
     }
   }, [id, user]);
+
+  // Calcular tamaño del QR basado en el ancho de la ventana
+  useEffect(() => {
+    const calculateQrSize = () => {
+      // Considerar el padding del modal (aproximadamente 100px) y un margen mínimo
+      const availableWidth = window.innerWidth - 100;
+      setQrSize(Math.min(256, Math.max(150, availableWidth)));
+    };
+
+    calculateQrSize();
+    window.addEventListener('resize', calculateQrSize);
+    return () => window.removeEventListener('resize', calculateQrSize);
+  }, []);
 
   const fetchSurvey = async () => {
     try {
@@ -244,7 +258,7 @@ export const SurveyDetails = () => {
 
       <Modal isOpen={showQR} onClose={() => setShowQR(false)} title="Código QR de la Encuesta">
         <div className="flex flex-col items-center space-y-4 p-2">
-          <QRCodeSVG value={publicUrl} size={Math.min(256, window.innerWidth - 100)} />
+          <QRCodeSVG value={publicUrl} size={qrSize} />
           <p className="text-xs sm:text-sm text-gray-600 text-center break-all px-2">{publicUrl}</p>
           <Button onClick={() => navigator.clipboard.writeText(publicUrl)} className="w-full sm:w-auto text-sm">
             Copiar URL

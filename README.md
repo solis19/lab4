@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Plataforma de Encuestas QR
 
 Aplicación frontend para gestión de encuestas y formularios dinámicos construida con React, TypeScript, Vite y Supabase.
@@ -173,7 +172,3 @@ Ver el archivo `.github/workflows/ci.yml` para más detalles.
 ## Licencia
 
 MIT
-
-=======
-# lab4
->>>>>>> 4b2df8b928b381be2fe1e94918092ccc1c71e82e

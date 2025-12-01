@@ -41,7 +41,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-xs sm:text-sm text-white truncate max-w-[80px] sm:max-w-none">
-                {(profile?.display_name || user?.email || '').split('@')[0]}
+                {profile?.display_name || (user?.email ? user.email.split('@')[0] : '')}
               </span>
               <button
                 onClick={handleSignOut}
