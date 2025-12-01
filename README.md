@@ -31,7 +31,7 @@ Aplicación frontend para gestión de encuestas y formularios dinámicos constru
 1. Clonar el repositorio:
 ```bash
 git clone <repository-url>
-cd EncuestasQR
+cd Surveys QR
 ```
 
 2. Instalar dependencias:

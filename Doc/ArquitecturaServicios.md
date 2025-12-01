@@ -1,4 +1,4 @@
-# Arquitectura de Servicios - EncuestasQR
+# Arquitectura de Servicios - Surveys QR
 
 ## 📋 Resumen
 

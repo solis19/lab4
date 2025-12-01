@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import qrImage from '../assets/image-QR.png';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -30,16 +29,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex items-center min-w-0 flex-1">
               <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3">
-                {/* QR decorativo antes del título */}
-                <div className="opacity-80 transform rotate-12 hidden xs:block">
-                  <img 
-                    src={qrImage} 
-                    alt="QR decorativo" 
-                    className="w-8 h-8 sm:w-10 sm:h-10 bg-white p-1 rounded"
-                  />
+                {/* Ícono QR decorativo inclinado antes del título */}
+                <div className="transform -rotate-12 bg-white p-1.5 rounded-md shadow-md">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-[#1d4ed8]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm-2 8h8v8H3v-8zm2 2v4h4v-4H5zm8-12v8h8V3h-8zm2 2h4v4h-4V5zm0 8h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm4-4h2v4h-2v-4zm0 6h2v2h-2v-2z"/>
+                  </svg>
                 </div>
                 <Link to="/dashboard" className="text-base sm:text-xl font-bold text-white truncate">
-                  EncuestasQR
+                  Surveys QR
                 </Link>
               </div>
               <div className="hidden md:ml-6 md:flex md:space-x-8">
